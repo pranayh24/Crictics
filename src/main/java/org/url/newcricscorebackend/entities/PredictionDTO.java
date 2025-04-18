@@ -11,7 +11,8 @@ public record PredictionDTO(
         String currentOvers,
         String tossWinner,
         String tossDecision,
-        String target
+        String target,
+        boolean isPlayoff
 ) {
     public PredictionDTO {
     }

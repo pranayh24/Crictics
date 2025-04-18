@@ -28,6 +28,7 @@ public class PredictionController {
 
     @GetMapping
     public ResponseEntity<List<PredResponseDTO>> getPredictions() {
+        System.out.println("GET /api/prediction endpoint called");
         try {
             List<Match> matches = matchService.getMatches();
             List<PredResponseDTO> predResponses = new ArrayList<>();

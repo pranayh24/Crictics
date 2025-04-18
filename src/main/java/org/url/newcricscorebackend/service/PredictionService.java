@@ -3,6 +3,7 @@ package org.url.newcricscorebackend.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -25,8 +26,9 @@ public class PredictionService {
     @Autowired
     private MatchSelection matchSelection;
 
-    public PredictionService() {
-        this.flaskBaseUrl = "http://localhost:5000";
+    public PredictionService(@Value("${flask.service.url}") String flaskServiceUrl) {
+        this.flaskBaseUrl = flaskServiceUrl.endsWith("/") ?
+                flaskServiceUrl.substring(0, flaskServiceUrl.length() - 1) : flaskServiceUrl;
         this.restTemplate = new RestTemplate();
     }
 
@@ -53,6 +55,7 @@ public class PredictionService {
             matchData.put("tossWinner", predictionDTO.tossWinner());
             matchData.put("tossDecision", predictionDTO.tossDecision());
             matchData.put("target", Integer.parseInt(predictionDTO.target()));
+            matchData.put("is_playoff", predictionDTO.isPlayoff());
 
             // Send to Flask service
             ResponseEntity<String> response = getPredictions(matchData);
@@ -140,7 +143,8 @@ public class PredictionService {
                 battingInfo[2], // overs
                 match.getTossWinner(),
                 match.getTossDecision(),
-                extractTarget(match.getBowlingTeamScore())
+                extractTarget(match.getBowlingTeamScore()),
+                false
         );
     }
 
