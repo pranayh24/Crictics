@@ -18,6 +18,7 @@ public class MatchController {
 
     @GetMapping("/get-all-matches")
     public ResponseEntity<List<Match>> getMatches() {
+        System.out.println("GET /matches/get-all-matches endpoint called");
         List<Match> matches = scrapper.getMatches();
         return new ResponseEntity<>(matches, HttpStatus.OK);
     }
@@ -36,5 +37,12 @@ public class MatchController {
     @GetMapping("/match/{id}")
     public ResponseEntity<Match> getMatchById(@PathVariable Long id) {
         return new ResponseEntity<>(scrapper.getMatchByMatchId(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/get-completed-matches")
+    public ResponseEntity<List<Match>> getCompletedMatches(@RequestParam(defaultValue = "3") int limit) {
+        System.out.println("GET /matches/get-completed-matches endpoint called");
+        List<Match> completedMatches = scrapper.getRecentCompletedMatches(limit);
+        return new ResponseEntity<>(completedMatches, HttpStatus.OK);
     }
 }

@@ -5,10 +5,15 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.url.newcricscorebackend.entities.Match;
+import org.url.newcricscorebackend.entities.MatchStatus;
 import org.url.newcricscorebackend.repositories.MatchRepository;
 import org.url.newcricscorebackend.util.MatchSelection;
 
@@ -142,4 +147,21 @@ public class MatchService {
     public Match getMatchByMatchId(Long matchId) {
         return matchRepository.getMatchByMatchId(matchId);
     }
+
+    public List<Match> getRecentCompletedMatches(int limit) {
+        return matchRepository.findByStatusOrderByMatchDateDesc(MatchStatus.COMPLETED, PageRequest.of(0, limit));
+    }
+
+    /*@Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins("http://localhost:3000")  // Your React dev server
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowCredentials(true);
+            }
+        };
+    }*/
 }
